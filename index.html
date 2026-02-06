@@ -72,10 +72,7 @@ input{
   text-align:center;
 }
 
-.btn-grid{
-  display:grid;
-  gap:10px;
-}
+.btn-grid{display:grid;gap:10px}
 
 button{
   padding:12px;
@@ -91,7 +88,19 @@ button{
 
 button:hover{background:var(--hot);transform:scale(1.05)}
 
-#yesBtn{background:#28a745;width:110px}
+#yesBtn{
+  background:#28a745;
+  width:110px;
+  animation:heartbeat 1.2s infinite;
+}
+
+@keyframes heartbeat{
+  0%,100%{transform:scale(1)}
+  25%{transform:scale(1.08)}
+  50%{transform:scale(1)}
+  75%{transform:scale(1.12)}
+}
+
 #noBtn{background:#6c757d;width:110px}
 
 /* shake */
@@ -101,11 +110,20 @@ button:hover{background:var(--hot);transform:scale(1.05)}
   75%{transform:translateX(10px)}
 }
 
+/* raccoon shake */
+.raccoonShake{animation:raccoon .3s linear 2}
+@keyframes raccoon{
+  20%{transform:rotate(-3deg)}
+  40%{transform:rotate(3deg)}
+  60%{transform:rotate(-3deg)}
+  80%{transform:rotate(3deg)}
+}
+
 /* particles */
 .particle{
   position:fixed;
   font-size:26px;
-  animation:burst 1s ease-out forwards;
+  animation:burst 1.2s ease-out forwards;
   pointer-events:none;
 }
 
@@ -114,6 +132,13 @@ button:hover{background:var(--hot);transform:scale(1.05)}
     transform:translate(var(--x),var(--y)) scale(0);
     opacity:0;
   }
+}
+
+/* teasing text */
+#tease{
+  font-size:14px;
+  color:#555;
+  margin-top:8px;
 }
 </style>
 </head>
@@ -217,9 +242,10 @@ button:hover{background:var(--hot);transform:scale(1.05)}
 <div class="step" id="s12">
 <h2>WILL YOU BE MY VALENTINE LOVEEEE???? ❤️</h2>
 <div style="display:flex;justify-content:center;gap:20px">
-<button id="yesBtn" onclick="right(13)">YES</button>
+<button id="yesBtn" onclick="finalYes()">YES</button>
 <button id="noBtn" onclick="dodgeNo()">no</button>
 </div>
+<div id="tease"></div>
 </div>
 
 <div class="step" id="s13">
@@ -227,8 +253,6 @@ button:hover{background:var(--hot);transform:scale(1.05)}
 <p>Thankyou for coming into my life out of nowhere and choosing to stay.</p>
 <h2 style="color:var(--hot)">I LOVE YOU AKSHAYA</h2>
 <p><strong>ISTG WAIT TILL I GET BACK.</strong></p>
-<p><strong>With Love,</strong></p>
-<p><strong>Your Santa</strong></p>
 </div>
 
 </div>
@@ -245,7 +269,6 @@ for(let i=0;i<25;i++){
  document.body.appendChild(h);
 }
 
-/* navigation */
 function go(n){
  explode("❤️");
  document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
@@ -260,6 +283,8 @@ function right(n){go(n)}
 
 function raccoon(){
  explode("🦝");
+ document.getElementById("card").classList.add("raccoonShake");
+ setTimeout(()=>document.getElementById("card").classList.remove("raccoonShake"),600);
  go(11);
 }
 
@@ -270,28 +295,45 @@ function wrong(){
  setTimeout(()=>location.reload(),600);
 }
 
-/* particles */
 function explode(sym){
- for(let i=0;i<20;i++){
+ for(let i=0;i<22;i++){
   let p=document.createElement("div");
   p.className="particle";
   p.innerHTML=sym;
   p.style.left="50%";
   p.style.top="50%";
-  p.style.setProperty("--x",(Math.random()-.5)*500+"px");
-  p.style.setProperty("--y",(Math.random()-.5)*500+"px");
+  p.style.setProperty("--x",(Math.random()-.5)*600+"px");
+  p.style.setProperty("--y",(Math.random()-.5)*600+"px");
   document.body.appendChild(p);
-  setTimeout(()=>p.remove(),1000);
+  setTimeout(()=>p.remove(),1200);
  }
 }
 
-/* dodge no */
+/* teasing no */
+const teases=[
+ "hmm that was close 😏",
+ "are you sure about that?",
+ "try again 😌",
+ "hehe nope",
+ "wrong button 😜"
+];
+let t=0;
+
 function dodgeNo(){
  explode("😂");
  const b=document.getElementById("noBtn");
  b.style.position="fixed";
  b.style.left=Math.random()*(innerWidth-120)+"px";
  b.style.top=Math.random()*(innerHeight-50)+"px";
+ document.getElementById("tease").innerText=teases[t++%teases.length];
+}
+
+/* final fireworks */
+function finalYes(){
+ for(let i=0;i<5;i++){
+   setTimeout(()=>explode("🎆"),i*300);
+ }
+ go(13);
 }
 </script>
 
